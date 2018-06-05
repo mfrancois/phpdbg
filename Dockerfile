@@ -13,5 +13,8 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install -j$(nproc) pgsql pdo_pgsql zip
 
+RUN curl -sS https://getcomposer.org/installer | \
+    php -- --install-dir=/usr/local/bin --filename=composer
 
-CMD ["phpdbg", "-qrr"]
+# ENTRYPOINT ["docker-php-entrypoint"]
+CMD ["phpdbg"]
