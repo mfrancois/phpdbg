@@ -5,13 +5,19 @@ RUN echo "deb http://cdn.debian.net/debian/ stretch-updates main contrib" >> /et
 
 RUN /bin/rm /etc/apt/sources.list
 
+RUN apt-get update && apt-get remove -y --purge libicu57 libicu-dev && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 # apt-get and system utilities
 RUN apt-get update && apt-get install -y \
-    curl apt-utils apt-transport-https debconf-utils gcc build-essential zlib1g-dev git libpq-dev \
+    curl apt-utils apt-transport-https debconf-utils gcc build-essential zlib1g-dev git libpq-dev g++ icu-devtools libxml2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y libicu-dev=57.1-6+deb9u1 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install -j$(nproc) pgsql pdo_pgsql zip
+    && docker-php-ext-install -j$(nproc) pgsql pdo_pgsql zip intl
 
 # install necessary locales
 RUN apt-get update && apt-get install -y locales \
